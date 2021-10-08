@@ -86,7 +86,7 @@ function createKey(note, octave, freq) {
   keyElement.dataset["frequency"] = freq;
 
   //*adding backticks here because looks wrong without. Deviation from instructions.
-  labelElement.innerHTML = `note + "<sub>" + octave + </sub>`;
+  labelElement.innerHTML = note + "<sub>" + octave + "</sub>";
   keyElement.appendChild(labelElement);
 
   keyElement.addEventListener("mousedown", notePressed, false);
@@ -98,3 +98,49 @@ function createKey(note, octave, freq) {
 }
 
 setup();
+
+function playTone(freq) {
+  let osc = audioContext.createOscillator();
+  osc.connect(mainGainNode);
+
+  let type = wavePicker.options[wavePicker.selectedIndex].value;
+
+  if (type == "custom") {
+    osc.setPeriodicWave(customWaveform);
+  } else {
+    osc.type = type;
+  }
+  osc.frequency.value = freq;
+  osc.start();
+
+  return osc;
+}
+
+function notePressed(event) {
+  if (event.buttons & 1) {
+    let dataset = event.target.dataset;
+
+    if (!dataset["pressed"]) {
+      let octave = +dataset["octave"];
+      oscList[octave][dataset["note"]] = playTone(dataset["frequency"]);
+      dataset["pressed"] = "yes";
+    }
+  }
+}
+
+function noteReleased(event) {
+  let dataset = event.target.dataset;
+
+  if (dataset && dataset["pressed"]) {
+    let octave = +dataset["octave"];
+    oscList[octave][dataset["note"]].stop();
+    delete oscList[octave][dataset["note"]];
+    delete dataset["pressed"];
+  }
+}
+
+function changeVolume(event) {
+  mainGainNode.gain.value = volumeControl.value;
+}
+
+console.log(noteFreq);

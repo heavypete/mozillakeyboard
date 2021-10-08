@@ -1,15 +1,24 @@
+body {
+  padding: 30px;
+  background-color: aquamarine;
+}
+
 .container {
   overflow-x: scroll;
   overflow-y: hidden;
-  width: 660px;
+  width: 1000px;
   height: 110px;
   white-space: nowrap;
-  margin: 10px;
+  margin: 30px;
+  padding: 30px;
+  background-color: rgb(5, 132, 136);
+  border-radius: thick black;
+  border-style: solid;
 }
 
 .keyboard {
   width: auto;
-  padding: 0;
+  padding: 30;
   margin: 0;
 }
 
@@ -29,6 +38,8 @@
   -moz-user-select: none;
   -webkit-user-select: none;
   -ms-user-select: none;
+  color: rgb(232, 156, 181);
+  background-color: rgb(146, 46, 79);
 }
 
 .key div {
@@ -45,12 +56,13 @@
 }
 
 .key:hover {
-  background-color: #eef;
+  background-color: rgb(46, 46, 146);
 }
 
 .key:active {
   background-color: #000;
   color: #fff;
+  transform: skewX(50px);
 }
 
 .octave {
@@ -69,7 +81,7 @@
 
 .left {
   width: 50%;
-  position: absolute;
+  position: relative;
   left: 0;
   display: table-cell;
   vertical-align: middle;
@@ -82,8 +94,9 @@
 
 .right {
   width: 50%;
-  position: absolute;
+  position: relative;
   right: 0;
+  left: 20px;
   display: table-cell;
   vertical-align: middle;
 }
