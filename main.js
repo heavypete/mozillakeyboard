@@ -4,6 +4,7 @@ let mainGainNode = null;
 let keyboard = document.querySelector(".keyboard");
 let wavePicker = document.querySelector("select[name='waveform']");
 let volumeControl = document.querySelector("input[name='volume']");
+let killButton = document.getElementById("kill-button");
 //global variables for constructing waveforms
 //*noteFreq will be an array of arrays; each array represents one octave,
 //*each of which contains one entry for each note in that octave. The value for each
@@ -22,6 +23,7 @@ function createNoteTable() {
   for (let i = 0; i < 9; i++) {
     noteFreq[i] = [];
   }
+
   noteFreq[0]["A"] = 27.5;
   noteFreq[0]["A#"] = 29.135235094880619;
   noteFreq[0]["B"] = 30.867706328507756;
@@ -36,8 +38,22 @@ function createNoteTable() {
   noteFreq[1]["G"] = 48.999429497718661;
   noteFreq[1]["G#"] = 51.913087197493142;
   noteFreq[1]["A"] = 55.0;
-  noteFreq[1]["A#"] = 58.270470189761239;
-  noteFreq[1]["B"] = 61.735412657015513;
+  noteFreq[1]["A#"] = 58.27;
+  noteFreq[1]["B"] = 61.74;
+  noteFreq[2]["C"] = 65.41;
+  noteFreq[2]["C#"] = 69.3;
+  noteFreq[2]["D"] = 73.42;
+  noteFreq[2]["D#"] = 77.78;
+  noteFreq[2]["E"] = 82.41;
+  noteFreq[2]["F"] = 87.31;
+  noteFreq[2]["F#"] = 92.5;
+  noteFreq[2]["G"] = 98.0;
+  noteFreq[2]["G#"] = 103.8;
+  noteFreq[2]["A"] = 110.0;
+  noteFreq[2]["A#"] = 116.5;
+  noteFreq[2]["B"] = 123.5;
+
+  noteFreq[3]["C"] = 130.8;
   return noteFreq;
 }
 
@@ -57,15 +73,14 @@ function setup() {
     octaveElem.className = "octave";
 
     keyList.forEach(function (key) {
-      if (key[0].length == 1) {
+      if (key[0].length < 3) {
         octaveElem.appendChild(createKey(key[0], idx, key[1]));
       }
     });
     keyboard.appendChild(octaveElem);
   });
-  document
-    .querySelector("div[data-note='B'][data-octave='5']")
-    .scrollIntoView(false);
+  document.querySelector("div[data-note='B'][data-octave='5']");
+  // .scrollIntoView(false)
 
   sineTerms = new Float32Array([0, 0, 1, 0, 1]);
   cosineTerms = new Float32Array(sineTerms.length);
@@ -76,6 +91,8 @@ function setup() {
   }
 }
 
+setup();
+
 function createKey(note, octave, freq) {
   let keyElement = document.createElement("div");
   let labelElement = document.createElement("div");
@@ -85,19 +102,16 @@ function createKey(note, octave, freq) {
   keyElement.dataset["note"] = note;
   keyElement.dataset["frequency"] = freq;
 
-  //*adding backticks here because looks wrong without. Deviation from instructions.
   labelElement.innerHTML = note + "<sub>" + octave + "</sub>";
   keyElement.appendChild(labelElement);
 
   keyElement.addEventListener("mousedown", notePressed, false);
-  keyElement.addEventListener("mouseup", noteReleased, false);
+  keyElement.addEventListener(killButton.onclick, noteReleased, false);
   keyElement.addEventListener("mouseover", notePressed, false);
-  keyElement.addEventListener("mouseleave", noteReleased, false);
+  keyElement.addEventListener(killButton.onclick, noteReleased, false);
 
   return keyElement;
 }
-
-setup();
 
 function playTone(freq) {
   let osc = audioContext.createOscillator();
@@ -110,6 +124,7 @@ function playTone(freq) {
   } else {
     osc.type = type;
   }
+
   osc.frequency.value = freq;
   osc.start();
 
@@ -141,6 +156,11 @@ function noteReleased(event) {
 
 function changeVolume(event) {
   mainGainNode.gain.value = volumeControl.value;
+}
+
+function killSwitch() {
+  console.log("killswitch engaged!!!");
+  audioContext = new (window.AudioContext || window.webkitAudioContext)();
 }
 
 console.log(noteFreq);
