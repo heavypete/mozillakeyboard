@@ -67,20 +67,27 @@ function setup() {
   mainGainNode.connect(audioContext.destination);
   mainGainNode.gain.value = volumeControl.value;
 
+  // Create the keys; skip any that are sharp or flat; for
+  // our purposes we don't need them. Each octave is inserted
+  // into a <div> of class "octave".
+
   noteFreq.forEach(function (keys, idx) {
     let keyList = Object.entries(keys);
     let octaveElem = document.createElement("div");
     octaveElem.className = "octave";
 
     keyList.forEach(function (key) {
-      if (key[0].length < 3) {
+      if (key[0].length == 1) {
         octaveElem.appendChild(createKey(key[0], idx, key[1]));
       }
     });
+
     keyboard.appendChild(octaveElem);
   });
-  document.querySelector("div[data-note='B'][data-octave='5']");
-  // .scrollIntoView(false)
+
+  //*keeps middle C in view
+  // document.querySelector("div[data-note='B'][data-octave='5']")
+  // .scrollIntoView(false);
 
   sineTerms = new Float32Array([0, 0, 1, 0, 1]);
   cosineTerms = new Float32Array(sineTerms.length);
@@ -106,9 +113,9 @@ function createKey(note, octave, freq) {
   keyElement.appendChild(labelElement);
 
   keyElement.addEventListener("mousedown", notePressed, false);
-  keyElement.addEventListener(killButton.onclick, noteReleased, false);
+  keyElement.addEventListener("mouseup", noteReleased, false);
   keyElement.addEventListener("mouseover", notePressed, false);
-  keyElement.addEventListener(killButton.onclick, noteReleased, false);
+  keyElement.addEventListener("mouseleave", noteReleased, false);
 
   return keyElement;
 }
@@ -158,9 +165,7 @@ function changeVolume(event) {
   mainGainNode.gain.value = volumeControl.value;
 }
 
-function killSwitch() {
-  console.log("killswitch engaged!!!");
-  audioContext = new (window.AudioContext || window.webkitAudioContext)();
-}
-
-console.log(noteFreq);
+// function killSwitch() {
+//   console.log("killswitch engaged!!!");
+//   audioContext = new (window.AudioContext || window.webkitAudioContext)();
+// }
